@@ -23,7 +23,15 @@ export const createApp = (): Application => {
     origin: (incomingOrigin, callback) => {
       // Allow requests with no origin (e.g. server-to-server or tools)
       if (!incomingOrigin) return callback(null, true);
-      if (allowedFrontend.includes(incomingOrigin)) return callback(null, true);
+       const normalizedIncoming = normalize(incomingOrigin);
+       const normalizedAllowed = allowedFrontend.map(normalize);
+
+      if (normalizedAllowed.includes(normalizedIncoming)) {
+        return callback(null, true);
+      }
+      console.log('Incoming origin:', incomingOrigin);
+      console.log('Allowed origins:', allowedFrontend);
+      console.error('❌ CORS blocked:', incomingOrigin);
       return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,

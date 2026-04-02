@@ -101,15 +101,7 @@ export default function LoginPage() {
               : 'Start bidding in minutes'}
           </p>
 
-          {/* Demo credentials */}
-          {mode === 'login' && (
-            <div className="bg-[#1E1E1E] border border-[#2A2A2A] rounded-lg p-4 mb-6 text-sm">
-              <p className="text-[#888] mb-1 font-medium">Demo credentials</p>
-              <p className="text-white font-mono">admin@copart-sim.com</p>
-              <p className="text-white font-mono">Admin@1234</p>
-            </div>
-          )}
-
+          
           {error && (
             <div className="bg-red-900/30 border border-red-700 text-red-400 rounded-lg px-4 py-3 mb-6 text-sm">
               {error}

@@ -17,6 +17,7 @@ export const createApp = (): Application => {
   app.use(helmet());
 
   // CORS
+  const normalize = (origin: string) => origin.trim().replace(/\/+$/, '');
   const allowedFrontend = [process.env.FRONTEND_URL || 'http://localhost:5173', 'http://localhost:5174'];
   app.use(cors({
     origin: (incomingOrigin, callback) => {
@@ -29,6 +30,7 @@ export const createApp = (): Application => {
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   }));
+  app.options('*', cors());
 
   // Rate limiting
   app.use(rateLimit({

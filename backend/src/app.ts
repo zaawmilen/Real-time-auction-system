@@ -37,7 +37,7 @@ export const createApp = (): Application => {
       }
       
       console.error('❌ CORS blocked:', incomingOrigin);
-      return callback(new Error('Not allowed by CORS'));
+      return callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

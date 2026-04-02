@@ -1,4 +1,4 @@
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { vehiclesApi } from '../services/api';
 import type { Vehicle, PaginatedResponse, VehicleFilters } from '../types';
 

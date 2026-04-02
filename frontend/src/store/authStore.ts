@@ -41,7 +41,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       // const { user, accessToken, refreshToken, expiresIn } = data;
       // const tokens = { accessToken, refreshToken, expiresIn };
       const { user, tokens } = data;
-      const { accessToken, refreshToken, expiresIn } = tokens;
+      const { accessToken, refreshToken } = tokens;
       
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
@@ -61,7 +61,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       // const { user, accessToken, refreshToken, expiresIn } = response;
       // const tokens = { accessToken, refreshToken, expiresIn };
       const { user, tokens } = response;
-      const { accessToken, refreshToken, expiresIn } = tokens;
+      const { accessToken, refreshToken } = tokens;
         
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);

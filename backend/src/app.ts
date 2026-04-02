@@ -17,20 +17,25 @@ export const createApp = (): Application => {
   app.use(helmet());
 
   // CORS
+  
+  const allowedFrontend = [process.env.FRONTEND_URL || 'http://localhost:5173', 'http://localhost:5174'].filter(Boolean);
   const normalize = (origin: string) => origin.trim().replace(/\/+$/, '');
-  const allowedFrontend = [process.env.FRONTEND_URL || 'http://localhost:5173', 'http://localhost:5174'];
-  app.use(cors({
-    origin: (incomingOrigin, callback) => {
+  
+  app.use(
+    cors({    
+      origin: (incomingOrigin, callback) => {
       // Allow requests with no origin (e.g. server-to-server or tools)
       if (!incomingOrigin) return callback(null, true);
-       const normalizedIncoming = normalize(incomingOrigin);
-       const normalizedAllowed = allowedFrontend.map(normalize);
-
+       
+      const normalizedIncoming = normalize(incomingOrigin);
+      const normalizedAllowed = allowedFrontend.map(normalize);
+     
+      console.log('Incoming origin:', incomingOrigin);
+      console.log('Allowed origins:', allowedFrontend);
       if (normalizedAllowed.includes(normalizedIncoming)) {
         return callback(null, true);
       }
-      console.log('Incoming origin:', incomingOrigin);
-      console.log('Allowed origins:', allowedFrontend);
+      
       console.error('❌ CORS blocked:', incomingOrigin);
       return callback(new Error('Not allowed by CORS'));
     },

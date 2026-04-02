@@ -22,7 +22,7 @@ const queryClient = new QueryClient({
 
 export default function App() {
   const toast = useToast();
-
+console.log('🔥 API BASE URL:', import.meta.env.VITE_API_URL);
   useEffect(() => {
     const unsub = wsService.on<any>('you_were_outbid', (data) => {
       const title = 'Outbid';

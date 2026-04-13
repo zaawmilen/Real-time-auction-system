@@ -1,64 +1,93 @@
-#  Real-Time Auction Simulator (Copart-Style)
+# Real-Time Auction System (Copart-Style)
 
-A full-stack, real-time auction platform that simulates live vehicle bidding with **concurrency-safe transactions**, **WebSocket updates**, and **event-driven notifications**.
+A real-time auction platform designed to **handle concurrent bidding without race conditions**.
 
-> Built to demonstrate production-grade backend engineering concepts including race condition handling, real-time systems, and transactional integrity.
+Built with WebSockets and transactional database locking to ensure that when multiple users bid at the same time, **only the correct highest bid is accepted**—consistently across all clients.
 
+---
 
-## 🔥 Live Demo
+## ⚡ Concurrency Proof (Core Feature)
 
-👉 frontend link : https://real-time-auction-system-eight.vercel.app/ 
+Open two browsers and place bids at the same time:
 
-👉 backend link: https://real-time-auction-system.onrender.com/
+* Only one bid succeeds
+* The other is rejected
+* All clients update instantly
 
+This guarantees:
+
+* No race conditions
+* No stale updates
+* Strong data consistency under concurrency
+
+---
+
+## 🚀 Live Demo
+
+Frontend: https://real-time-auction-system-eight.vercel.app/
+Backend: https://real-time-auction-system.onrender.com/
+
+### Test It Yourself
+
+1. Open two browser sessions
+2. Login as different users
+3. Place bids simultaneously
+4. Observe real-time updates + bid rejection
+
+---
 
 ## 🧠 Key Features
 
-### 🔐 Authentication & User Identity
-
-* JWT-based authentication
-* Secure session management on login/logout
-* User identity drives targeted events (outbid notifications, bid ownership)
-
----
-
 ### ✅ Concurrency-Safe Bidding
 
-* Uses **database transactions + `SELECT ... FOR UPDATE`**
-* Prevents race conditions when multiple users bid simultaneously
-* Guarantees only one winning bid at any moment
+* Uses **database transactions + row-level locking (`SELECT ... FOR UPDATE`)**
+* Prevents conflicting updates from simultaneous bids
+* Guarantees a single valid highest bid
 
 ---
 
-### ⚡ Real-Time Bid Updates
+### ⚡ Real-Time Updates (WebSockets)
 
 * Powered by **Socket.IO**
-* All connected users see bids instantly
-* Supports multi-user live auction rooms
+* Instant bid propagation across all connected clients
+* Room-based event broadcasting (`auction:<id>`)
 
 ---
 
-### 🔔 Outbid Notifications (Targeted)
+### 🔔 Outbid Notifications
 
-* Real-time **user-specific WebSocket events**
-* Instantly notifies users when they are outbid
-* Includes contextual data (vehicle + bid amount)
-
----
-
-### ⏱ Anti-Sniping Mechanism
-
-* Automatically extends auction timer when bids occur near closing
-* Prevents last-second unfair wins
-* Mimics real-world auction platforms
+* User-targeted WebSocket events
+* Instant feedback when a user is outbid
+* Context-aware (bid amount + auction item)
 
 ---
 
-### 📊 Consistent Bid State (No Data Drift)
+### ⏱ Anti-Sniping Timer
 
-* Bid status is **derived from source-of-truth (lot state)**
-* Avoids stale or inconsistent UI states
-* Ensures accurate "winning / outbid / completed" statuses
+* Last-second bids extend auction time
+* Prevents unfair last-millisecond wins
+* Server-controlled for accuracy and fairness
+
+---
+
+### 🔐 Authentication & Roles
+
+* JWT-based authentication
+* Role-based access:
+
+  * Auctioneer → controls auction flow
+  * Bidder → participates in bidding
+
+---
+
+### 🔁 Fault-Tolerant Reconnect
+
+* Refresh-safe architecture
+* Clients automatically:
+
+  * Resync auction state
+  * Restore timer
+  * Rejoin WebSocket stream
 
 ---
 
@@ -70,62 +99,51 @@ A full-stack, real-time auction platform that simulates live vehicle bidding wit
 SELECT ... FOR UPDATE
 ```
 
-* Locks auction lot row during bidding
+* Locks auction row during bidding
 * Ensures safe concurrent updates
 
 ---
 
 ### 📡 Event-Driven Architecture
 
-* WebSocket-based communication layer
-* Room-based broadcasting (`auction:<id>`)
-* User-targeted events for personalized notifications
+* WebSocket-based communication
+* Real-time event broadcasting
+* User-specific event targeting
 
 ---
 
-### 🔁 Real-Time Synchronization
+### 📊 Consistency Model
 
-* Backend = source of truth
-* WebSocket = real-time UI sync layer
-* React Query = controlled refetch + caching (handles deduplication, background revalidation, and stale state management)
+* Backend = **single source of truth**
+* Clients = **stateless renderers of server state**
+* React Query = caching + background synchronization
 
 ---
 
-## 🧪 Demo Scenarios (What You Can Test)
+## 🧪 Demo Scenarios
 
-1. **Register two accounts** and open each in a separate browser session
-
-2. **Place simultaneous bids**
-   → Only one succeeds (proves concurrency safety)
-
-3. **Get outbid**
-   → Instant notification appears on the outbid user's session
-
-4. **Place a last-second bid**
-   → Auction timer extends automatically
+* Simultaneous bidding → only one wins
+* Real-time updates across multiple clients
+* Instant outbid notifications
+* Timer extension on last-second bids
+* Seamless recovery after browser refresh
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Frontend
+**Frontend**
 
 * React + TypeScript
 * React Query
 * Socket.IO Client
 
-### Backend
+**Backend**
 
 * Node.js + Express
 * PostgreSQL
 * Socket.IO
-* JWT (Authentication)
-
-### Database
-
-* Transactional queries
-* Row-level locking
-* Relational joins for enriched data
+* JWT Authentication
 
 ---
 
@@ -145,84 +163,54 @@ server/        # Node.js backend
 
 ---
 
-## 🚀 Getting Started (Local Setup)
-
-### 1. Clone repo
+## 🚀 Local Setup
 
 ```bash
 git clone https://github.com/zaawmilen/Real-time-auction-system.git
 cd auction-simulator
 ```
 
-### 2. Install dependencies
-
 ```bash
+# install
 cd server && npm install
 cd ../client && npm install
 ```
 
-### 3. Configure environment variables
-
-Create `.env` in `/server`:
-
-```env
+```bash
+# environment (.env in /server)
 DATABASE_URL=your_postgres_url
 JWT_SECRET=your_secret
 FRONTEND_URL=http://localhost:5173
 ```
 
-### 4. Seed the database
-
-The server includes a seed script to populate auction lots and vehicles for testing:
-
 ```bash
+# seed data
 cd server
 npm run seed
 ```
 
-### 5. Run app
-
 ```bash
-# backend
-cd server
-npm run dev
-
-# frontend
-cd client
+# run
 npm run dev
 ```
 
 ---
 
-## 🎯 What This Project Demonstrates
+## 📌 Roadmap
 
-* Handling **race conditions in real systems**
-* Designing **real-time architectures**
-* Implementing **event-driven communication**
-* Maintaining **data consistency under concurrency**
-* Building **production-like backend logic**
-* Securing APIs with **JWT-based authentication**
-
----
-
-## 📌 Future Improvements (Planned)
-
+* Bid history (audit trail)
 * Proxy bidding (auto-bid engine)
-* Redis Pub/Sub for multi-server scaling
+* Redis Pub/Sub for horizontal scaling
 * Persistent notification system
-* Auction analytics dashboard
 
 ---
 
 ## 👨‍💻 Author
 
 **Zewdie K. Gebrehiwot**
-Full-Stack Developer | Backend-Focused
-
-* Strong interest in real-time systems & scalable architectures
+Full-Stack Developer (Backend-Focused)
+Interested in real-time systems, concurrency, and scalable architectures
 
 ---
 
-## ⭐ If You Like This Project
-
-Give it a star ⭐ — it helps visibility and supports my work!
+⭐ If this project helped or impressed you, consider giving it a star.

@@ -101,7 +101,6 @@ export default function LoginPage() {
               : 'Start bidding in minutes'}
           </p>
 
-    
 
           {error && (
             <div className="bg-red-900/30 border border-red-700 text-red-400 rounded-lg px-4 py-3 mb-6 text-sm">

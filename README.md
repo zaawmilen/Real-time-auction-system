@@ -149,7 +149,7 @@ server/        # Node.js backend
 ### 1. Clone repo
 
 ```bash
-git clone https://github.com/your-username/auction-simulator.git
+git clone https://github.com/zaawmilen/Real-time-auction-system.git
 cd auction-simulator
 ```
 
